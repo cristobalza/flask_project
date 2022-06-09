@@ -10,23 +10,18 @@ pets = [
             {"id": 4, "name": "Mr. Furrkins", "age": "5 years", "bio": "Probably napping."}, 
         ]
 
-"""1. Add a View Function for the Home page."""
-@app.route('/')
-def home():
-    return render_template('home.html', pets = pets)
+@app.route("/")
+def homepage():
+    """View function for Home Page."""
+    return render_template("part4_2.html", pets = pets)
 
-"""2. Add a View Function for the About page."""
-@app.route('/about') 
+
+@app.route("/about")
 def about():
-    return render_template('about.html')
-    
-@app.route("/details/<int:pet_id>")
-def pet_details(pet_id):
-    """View function for Showing Details of Each Pet.""" 
-    pet = next((pet for pet in pets if pet["id"] == pet_id), None) 
-    if pet is None: 
-        abort(404, description="No Pet was Found with the given ID")
-    return render_template("details.html", pet = pet)
-    
+    """View function for About Page."""
+    return render_template("about.html")
+
+
+
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=3000)
+    app.run(debug=True)

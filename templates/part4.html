@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Part 4 - Jinja Demo</title>
+</head>
+
+<body>
+
+    <!-- Single String -->
+    <h1 style="text-align: center">Betty : {{users['Betty']}}</h1>
+    <!-- For loop -->
+    <table style="width:100%; text-align:center">
+        <tr>
+            <th>Index</th>
+            <th>Username</th>
+            <th>Location</th>
+        </tr>
+        {% for username, location in users.items() %}
+        <tr>
+            <td>{{loop.index - 1}}</td>
+            <td>{{username}}</td>
+            <td>{{location}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <!-- If - elif - else  -->
+    <table style="width:100%; text-align:center">
+        <tr>
+            <th>Username</th>
+            <th>Location</th>
+        </tr>
+        {% for username, location in users.items() %} {% if location == "Los Angeles" %}
+        <tr>
+            <td>{{username}}</td>
+            <td>{{location}}</td>
+        </tr>
+        {% endif %} {% endfor %}
+    </table>
+
+</body>
+
+</html>

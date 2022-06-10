@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}
+ Login Page
+{% endblock %}
+  
+{% block content %}
+<h1>Login</h1>
+
+{% if message %} 
+{{ message }}
+ {% endif %} 
+ 
+{% if form %}
+<form action="{{url_for('login_page')}}" method="POST">
+    <!-- Email Field -->
+    {{ form.email.label }}:<br>
+    {{ form.email }}
+    <!-- Email Handle Errors -->
+    {% if form.email.errors %}
+        {% for error in form.email.errors %}
+            <b style="color:tomato;"> {{ error }} </b> 
+            <br>
+        {% endfor %}
+    {% endif %}
+    <br> 
+    <!-- Pasword Field -->
+    {{ form.password.label }}:<br>
+    {{ form.password }} 
+    <!-- Password Error Handling -->
+    {% if form.password.errors %}
+        {% for error in form.password.errors %}
+            <b style="color:tomato;"> {{ error }} </b>
+            <br>
+        {% endfor %}
+    {% endif %}
+    <br>
+    <!-- CSRF Token -->
+    {{ form.csrf_token }} 
+    <!-- Submit Button -->
+    {{ form.submit }}
+</form>
+{% endif %}
+{% endblock %}

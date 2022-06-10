@@ -12,7 +12,12 @@
         <ul style="list-style-type: none;float: right;font-size: large;">
             <li style="display:inline"><a href="{{url_for('home_page')}}">Home</a></li>
             <li style="display:inline"><a href="{{url_for('about_page')}}">About</a></li>
+            {% if 'user' in session %}
+            <li style="display:inline"><a href="{{url_for('logout')}}">Log out</a></li>
+            {% else %}
             <li style="display:inline"><a href="{{url_for('signup_page')}}">Sign Up</a></li>
+            <li style="display:inline"><a href="{{url_for('login_page')}}">Login</a></li>
+            {% endif %}
         </ul>
     </div>
     <h1 id="title"> {% block heading %} {% endblock %} </h1>

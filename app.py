@@ -1,6 +1,6 @@
 """Flask Application for Paws Rescue Center."""
-from flask import Flask, render_template, abort
-from forms import SignUpForm
+from flask import Flask, render_template, abort, redirect, session, url_for
+from forms import SignUpForm, LoginForm
 
 app = Flask(__name__)
 
@@ -46,7 +46,26 @@ def signup_page():
         users.append(new_user) # add new user
         return render_template("signup.html", message = "Successfully signed up!")
     return render_template('signup.html',form = form)
-    
+
+@app.route("/login/", methods = ["GET", "POST"])
+def login_page():
+    '''Login for existing  users'''
+    form = LoginForm()
+    if form.validate_on_submit():
+        existing_user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
+        if existing_user:
+            session['user'] = existing_user
+            return render_template('login.html', message="Succesfuly Login")
+        else:
+            return render_template('login.html', message= "Email "+str(form.email.data)+" does not exist in our records or password is incorrect. Please sign up.")
+    return render_template("login.html",form = form)
+
+@app.route("/logout/")
+def logout():
+    if 'user' in session:
+        session.pop('user')
+    # return redirect(url_for('home_page', _scheme='https', _external=True))
+    return redirect(url_for('home_page'))
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)

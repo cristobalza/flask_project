@@ -1,9 +1,10 @@
 """Flask Application for Paws Rescue Center."""
 from flask import Flask, render_template, abort
-
-from forms import LoginForm
+from forms import SignUpForm
 
 app = Flask(__name__)
+
+app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
 
 """Information regarding the Pets in the System."""
 pets = [
@@ -15,26 +16,26 @@ pets = [
 
 """1. Add a View Function for the Home page."""
 @app.route('/')
-def home():
+def home_page():
     return render_template('home.html', pets = pets)
 
 """2. Add a View Function for the About page."""
 @app.route('/about') 
-def about():
+def about_page():
     return render_template('about.html')
     
 @app.route("/details/<int:pet_id>")
-def pet_details(pet_id):
+def pet_details_page(pet_id):
     """View function for Showing Details of Each Pet.""" 
     pet = next((pet for pet in pets if pet["id"] == pet_id), None) 
     if pet is None: 
         abort(404, description="No Pet was Found with the given ID")
     return render_template("details.html", pet = pet)
 
-@app.route("/signup/")
-def signup():
+@app.route("/signup/", methods = ["GET", "POST"])
+def signup_page():
     '''Sign up to the Organization'''
-    form = LoginForm()
+    form = SignUpForm()
     return render_template('signup.html',form = form)
     
 if __name__ == "__main__":

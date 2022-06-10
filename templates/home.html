@@ -12,7 +12,7 @@
     <tr>
         <td>
             <a href="{{url_for('pet_details', pet_id = pet['id'])}}">
-                <img src="{{url_for('static', filename = pet[" id "]|string+".jpg ")}}" height="100">
+                <img src= "{{url_for('static', filename = pet["id"]|string+".jpg")}}" height="100" >
             </a>
         </td>
         <td>{{ pet["name"] }}</td>

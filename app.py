@@ -47,5 +47,6 @@ def signup_page():
         return render_template("signup.html", message = "Successfully signed up!")
     return render_template('signup.html',form = form)
     
+    
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)

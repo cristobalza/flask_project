@@ -1,10 +1,34 @@
 """Flask Application for Paws Rescue Center."""
 from flask import Flask, render_template, abort, redirect, session, url_for
 from forms import SignUpForm, LoginForm
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
 
 app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pets.db'
+
+db = SQLAlchemy(app)
+
+"""Model for Pets."""
+class Pet(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String, unique=True)
+    age = db.Column(db.String)
+    bio = db.Column(db.String)
+    posted_by =  db.Column(db.String, db.ForeignKey('user.id'))
+
+
+"""Model for Users."""
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String)
+    email = db.Column(db.String, unique=True)
+    password = db.Column(db.String)
+    pets = db.relationship('Pet', backref = 'user')
+
+
+db.create_all()
 
 """Information regarding the Pets in the System."""
 pets = [
@@ -55,9 +79,11 @@ def login_page():
         existing_user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
         if existing_user:
             session['user'] = existing_user
-            return render_template('login.html', message="Succesfuly Login")
+            mssg = "Succesfuly Login"
+            return render_template('login.html', message=mssg)
         else:
-            return render_template('login.html', message= "Email "+str(form.email.data)+" does not exist in our records or password is incorrect. Please sign up.")
+            mssg = "Email "+str(form.email.data)+" does not exist in our records or password is incorrect. Please sign up."
+            return render_template('login.html', message=mssg)
     return render_template("login.html",form = form)
 
 @app.route("/logout/")

@@ -15,8 +15,8 @@ Sign Up
 {% endif %}
 
 {% if form %}
-<form action="{{url_for('signup_page')}}" method="POST" style="padding:5px;">
-    
+<form action="{{url_for('signup')}}" method="POST" style="padding:5px;">
+
     <!-- Full Name Field -->
     {{ form.full_name.label }}: <br>
     {{ form.full_name }} 

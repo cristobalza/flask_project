@@ -1,13 +1,12 @@
 """Flask Application for Paws Rescue Center."""
-from flask import Flask, render_template, abort, redirect, session, url_for
+from flask import Flask, render_template, abort
 from forms import SignUpForm, LoginForm
+from flask import session, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
 app.config['SECRET_KEY'] = 'dfewfew123213rwdsgert34tgfd1234trgf'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pets.db'
-
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///paws.db'
 db = SQLAlchemy(app)
 
 """Model for Pets."""
@@ -27,7 +26,6 @@ class User(db.Model):
     password = db.Column(db.String)
     pets = db.relationship('Pet', backref = 'user')
 
-
 db.create_all()
 
 """Information regarding the Pets in the System."""
@@ -43,55 +41,65 @@ users = [
             {"id": 1, "full_name": "Pet Rescue Team", "email": "team@pawsrescue.co", "password": "adminpass"},
         ]
 
-"""1. Add a View Function for the Home page."""
-@app.route('/')
-def home_page():
-    return render_template('home.html', pets = pets)
+@app.route("/")
+def home():
+    """View function for Home Page."""
+    return render_template("home.html", pets = pets)
 
-"""2. Add a View Function for the About page."""
-@app.route('/about') 
-def about_page():
-    return render_template('about.html')
-    
+
+@app.route("/about")
+def about():
+    """View function for About Page."""
+    return render_template("about.html")
+
+
 @app.route("/details/<int:pet_id>")
-def pet_details_page(pet_id):
+def pet_details(pet_id):
     """View function for Showing Details of Each Pet.""" 
     pet = next((pet for pet in pets if pet["id"] == pet_id), None) 
     if pet is None: 
         abort(404, description="No Pet was Found with the given ID")
     return render_template("details.html", pet = pet)
 
-@app.route("/signup/", methods = ["GET", "POST"])
-def signup_page():
-    '''Sign up a new User'''
+
+@app.route("/signup", methods=["POST", "GET"])
+def signup():
+    """View function for Showing Details of Each Pet.""" 
     form = SignUpForm()
     if form.validate_on_submit():
-        new_user = {"id": len(users)+1, "full_name": form.full_name.data, "email": form.email.data, "password": form.password.data}
-        users.append(new_user) # add new user
-        return render_template("signup.html", message = "Successfully signed up!")
-    return render_template('signup.html',form = form)
+        # new_user = {"id": len(users)+1, "full_name": form.full_name.data, "email": form.email.data, "password": form.password.data}
+        # users.append(new_user)
+        new_user = User(full_name = form.full_name.data, email = form.email.data, password = form.password.data)
+        db.session.add(new_user)
+        try:
+            db.session.commit()
+        except Exception as e:
+            print(e)
+            db.session.rollback()
+            return render_template("signup.html", form = form, message = "This Email already exists in the system! Please Log in instead.")
+        finally:
+            db.session.close()
+        return render_template("signup.html", message = "Successfully signed up")
+    return render_template("signup.html", form = form)
 
-@app.route("/login/", methods = ["GET", "POST"])
-def login_page():
-    '''Login for existing  users'''
+
+@app.route("/login", methods=["POST", "GET"])
+def login():
     form = LoginForm()
     if form.validate_on_submit():
-        existing_user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
-        if existing_user:
-            session['user'] = existing_user
-            mssg = "Succesfuly Login"
-            return render_template('login.html', message=mssg)
+        user = next((user for user in users if user["email"] == form.email.data and user["password"] == form.password.data), None)
+        if user is None:
+            return render_template("login.html", form = form, message = "Wrong Credentials. Please Try Again.")
         else:
-            mssg = "Email "+str(form.email.data)+" does not exist in our records or password is incorrect. Please sign up."
-            return render_template('login.html', message=mssg)
-    return render_template("login.html",form = form)
+            session['user'] = user
+            return render_template("login.html", message = "Successfully Logged In!")
+    return render_template("login.html", form = form)
 
-@app.route("/logout/")
+@app.route("/logout")
 def logout():
     if 'user' in session:
         session.pop('user')
-    # return redirect(url_for('home_page', _scheme='https', _external=True))
-    return redirect(url_for('home_page'))
+    return redirect(url_for('homepage', _scheme='https', _external=True))
     
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=3000)

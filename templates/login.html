@@ -12,7 +12,7 @@
  {% endif %} 
  
 {% if form %}
-<form action="{{url_for('login_page')}}" method="POST">
+<form action="{{url_for('login')}}" method="POST">
     <!-- Email Field -->
     {{ form.email.label }}:<br>
     {{ form.email }}

@@ -1,3 +1,10 @@
-# Flask Project 
+# Flask Project: Veterinary Shop
 
-Are accompanied with the Bear Notes.
+## Tech Stack
+
+- Python
+- Flask
+- SQLAlchemy
+- HTML, CSS
+
+
